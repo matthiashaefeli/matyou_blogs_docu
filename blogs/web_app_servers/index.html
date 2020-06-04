@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="styles.css">
+    <title>Web Server, App Server and Rack</title>
+  </head>
+  <body>
+    <div class="bg">
+      <h1>Web Server, App Server and Rack</h1>
+    </div>
+    <div class="body">
+      <p class="titleSentence">
+        <b>
+          Today I learned about web and application servers.<br>
+          Why do we need a web server and an application server?<br>
+          What is the difference and how do they work together?
+        </b>
+      </p>
+      <h2>Web Server</h2>
+      <p>The basic Job of all Web Servers is to
+         accept requests from clients ( a visitor's web browser)
+         and then send the response to that request
+         (components of the page that a visitor wants to see).
+         Apache and Nginx are the two most common open source web servers.
+      </p>
+      <p>
+        <span><b>Apache:</b></span> An Apache server will handle numerous HTTP requests at a single time.
+        In order to do this, the server has to run on multiple "threads" of execution.
+        A thread is a part of a program that branches off from the main program and runs at the same time in order to accomplish a specific task.
+        The Apache server will create a new thread for each HTTP request that will handle fetching and returning the requested Web page.
+        This allows Apache to serve Web pages to multiple users at the same time.
+        Apache is often choosen by administrators for its flexibility, power, and widespread support.
+        It is extensible through a dynamically loadable module system and can process a large number of interpreted languages without connecting out to separate software.
+      </p>
+      <p>
+        <span><b>Nginx:</b></span> Nginx is built to offer low memory usage and high concurrency.
+        Rather than creating new processes for each web request, Nginx uses an asynchronous, event-driven approach where requests are handled in a single thread.
+        With Nginx, one master process can control multiple worker processes.
+        The master maintains the worker processes, while the workers do the actual processing.
+        Because Nginx is asynchronous, each request can be executed by the worker concurrently without blocking other requests.
+        Nginx is often selected by administrators for its resource efficiency and responsiveness under load. Advocates welcome Nginx's focus on core web server and proxy features.
+      </p>
+      <h2>App Server</h2>
+      <p>
+        An Application Server actually runs the Rails app. The app server loads the code and keeps the app in memory. When the app server gets a request from the web server,
+        it tells the app about it. After the app is done handling the request, the app server sends the response back to the web server.
+        Typical app servers are: <b>Unicorn, Puma, and Passenger.</b>
+      </p>
+      <p>
+        These servers manages workers which are seperate processes. All of these workers are started when you launch the master process,
+        and they persist until the master process exists.
+      </p>
+      <h2>Rack</h2>
+      <p>
+        Rack is a minimal interface between appservers supporting Ruby and Ruby frameworks.
+        When we build a web app with Ruby we always have two components that need to work together. The app server and the Ruby app.
+        It gives a large number of app servers (Unicorn, Puma, Phusion Passenger, WEBrick) a common way of communicating with the most common Ruby frameworks (Ruby on Rails, Sinatra, Lotus).
+        It allows both parties to speak HTTP the same way.
+      </p>
+      <h2>How they work together?</h2>
+      <p>
+        A web request will be sent to your web server. After some processing the web server passes it to the app server.
+        The app server hands the request to Rack, and then Rack gives it to Rails as a request, usually a method call. This is where Rails routing takes over.
+        Then rails returns the response back through Rack, the app server
+        and the web server to the browser of the user.
+      </p>
+    </div>
+    <footer class="footer">
+      <p>Posted by: Mat</p>
+      <p>Contact information: <a href="mailto:mat@matyou.net">
+          mat@matyou.net</a>.
+      </p>
+      <p><a href="http://www.matyou.net/pages">Matyou Blog</a></p>
+    </footer>
+  </body>
+</html>

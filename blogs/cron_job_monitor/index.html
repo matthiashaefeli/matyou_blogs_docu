@@ -1,0 +1,98 @@
+<!DOCTYPE html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="styles.css">
+  <title>Cron Job Monitor</title>
+</head>
+<body>
+  <div class="bg">
+     <h1>Cron Job Monitor</h1>
+  </div>
+  <div class="body">
+    <h2>Create a Cron Job Monitor Tool</h2>
+    <p>
+      We never know if a cron job works or not until we notice an error or a user is complaining about something that is not working.<br>
+      How can we prevent something like that?<br>
+      We could set up an email, everytime the job runs we get a confirmation email.<br>
+      But with too many cron jobs we would lose the overview, and if we have a cron job that runs every 5 minutes, we would get an email every 5 minutes.<br>
+      That's too much!<br>
+    </p>
+
+    <p>
+      I was searching online for solution, and there are a lot of tools to monitor the cron job,<br>
+      but you have to register and if you have many cron jobs to monitor you have to pay for it.
+    </p>
+    <h3>So I decided to create my own monitor tool.</h3>
+    <p>
+      First, we know that we can send a post request from the command line with the curl command.<br>
+      If we do something like that:
+    </p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      curl https://www.google.com/
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      We get a response with the content of the page.<br>
+      We can also do a curl with parameters and hit a method to post something, and that is what we need.<br>
+      We need to know what cron job it is and maybe a verification code to prevent a hacker attack.
+    </p>
+    <p>
+      We already have a running Rails app, so we need to add the monitor controller and model.<br>
+      I am not going into details to create the controller and model. (create a Rails app and add controllers and models is another blog)<br>
+      But i created a cron job model with name, verification and schedule.<br>
+      For schedule i used the cron job schedule like <b>10 * * * *</b>.
+    </p>
+    <h3>gem 'parse-cron'</h3>
+    <p>
+      This gem was really helpfull to convert the cron job schedule into ruby time. And i used the converter to check<br>
+      what was the schedule for the last run and what is the schedule for the next run. 
+    </p>
+    <p>
+      In the Linux command line with the command crontab -l we can see the list of all running con jobs.<br>
+      With the command crontab -e we can edit those commands.<br>
+      If we have a cron job like:
+    </p>
+  </div>
+  <div class="code_wide">
+    <br>
+    <p>
+      0,14,24,34,44,54 * * * * /home/admin/bin/do_some_stuff.sh >/dev/null 2>&1
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      I added the following curl command before the >/dev/null
+    </p>
+  </div>
+  <div class="code_wide">
+    <br>
+    <p>
+      && curl https://test.com/cron_job_monitor/monitor/do_some_stuff=LKAX3W-8GR7-56785L
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      do_some_stuff is the name of the cron job and the key is to verify the cron job.<br>
+      The only thing to do, is create the controller method monitor to handle the request.<br>
+      We verify the cron job by name and verification code, and create a new db entrance with the name and time.<br>
+      Now we know (thanks to the gem 'parse-cron') when should the cron job have been running and we can compare the times.
+    </p>
+  </div>
+  <footer class="footer">
+    <p>Posted by: Mat 12/06/2019</p>
+    <p>Contact information: <a href="mailto:mat@matyou.net">
+        mat@matyou.net</a>.
+    </p>
+    <p><a href="http://www.matyou.net/pages">Matyou Blog</a></p>
+  </footer>
+</body>
+</html>

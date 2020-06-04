@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="styles.css">
+    <title>Stored Procedure</title>
+  </head>
+  <body>
+    <div class="bg">
+      <h1></h1>
+    </div>
+    <div class="body">
+      <h1>Stored Procedure that runs every day.</h1>
+      <p>A stored procedure is a prepared SQL code that you can save, so the code can be reused over and over again.
+         So if you have an SQL query that you write over and over again, save it as a stored procedure, and then just call it to execute it.
+         A stored procedure will accept input parameters so that a single procedure can be used over the network by several clients using different input data.
+         You can create a job to run the stored procedure every day, hour or whenever.
+      </p>
+      <h2>Create a simple Stored Procedure</h2>
+      <p>The following SQl statement creates a stored procedure that selects Students with a specific name from the 'students' table.</p>
+    </div>
+    <div class="code">
+      <p>
+        CREATE PROCEDURE SelectAllStudents @Name nvarchar(30)<br>
+        AS<br>
+        <span class="tab"></span>SELECT *<br>
+        <span class="tab"></span>FROM students<br>
+        <span class="tab"></span>WHERE name = @Name<br>
+        GO
+      </p>
+    </div>
+    <div class="body">
+      <p>Execute the stored procedure:</p>
+    </div>
+    <div class="code">
+      <p>EXEC SelectAllStudents @Name = 'Jake'</p>
+    </div>
+    <div class="body">
+      <p>You can add multiple parameters. List each parameter and the data type seperated by a comma:</p>
+    </div>
+    <div class="code">
+      <p>
+        CREATE PROCEDURE SelectAllStudents @Name nvarchar(30), @Age int<br>
+        AS<br>
+        <span class="tab"></span>SELECT *<br>
+        <span class="tab"></span>FROM students<br>
+        <span class="tab"></span>WHERE name = @Name<br>
+        GO
+      </p>
+    </div>
+    <div class="body">
+      <p>Execute the stored procedure:</p>
+    </div>
+    <div class="code">
+      <p>EXEC SelectAllStudents @Name = 'Jake', @Age = 20</p>
+    </div>
+    <div class="body">
+      <p>Maybe we have a View and this view is created of different tables and other stuff that the rows updated all the time.<br>
+         This updates will happen all day long, but we only need the last version of the day before.<br>
+         So we create a copy of this table every night.<br>
+      </p>
+      <p>First we create the stored procedure to delete the rows in the table and then copy the rows of the first table<br>
+         into the second table.
+      </p>
+    </div>
+    <div class="code">
+      <p>
+        CREATE PROCEDURE CopyTablePopulation<br>
+        AS<br>
+        <span class="tab"></span>SET NOCOUNT ON;<br><br>
+        <span class="tab"></span>DELETE population_yesterday<br><br>
+        <span class="tab"></span>GO<br><br>
+        <span class="tab"></span>INSERT INTO population_yesterday<br>
+        <span class="tab"></span>SELECT *<br>
+        <span class="tab"></span>FROM population<br>
+        GO
+      </p>
+    </div>
+    <div class="body">
+      <p>So, we have the stored procedure, and now we have to create a job that runs every night, every day.</p>
+      <p>
+        Rigth click on SQL Server Agent => New => Job<br>
+        Type a Name, and add a description if you need one.<br>
+        Click on Steps => New...<br>
+        Type a Step name, Select Database, and enter the command to run the stored procedure (EXEC CopyTablePopulation) => OK<br>
+        Click on Schedules => New...<br>
+        Type a name, Select frequency 'Daily', and change Daily frequency to the desired hour => OK<br>
+        And finally => OK<br>
+      </p>
+      <p>We saw that the whole thing is not that difficult. That was a simple example, it can get complicated very quickly.</p>
+    </div>
+    <footer class="footer">
+      <p>Posted by: Mat</p>
+      <p>Contact information: <a href="mailto:mat@matyou.net">
+          mat@matyou.net</a>.
+      </p>
+      <p><a href="http://www.matyou.net/pages">Matyou Blog</a></p>
+    </footer>
+  </body>
+</html>

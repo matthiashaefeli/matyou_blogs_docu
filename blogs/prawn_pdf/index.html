@@ -1,0 +1,148 @@
+<!DOCTYPE html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="styles.css">
+  <title>Rails Prawn PDF</title>
+</head>
+<body>
+  <div class="bg">
+    <h1>Rails Prawn PDF</h1>
+  </div>
+  <div class="body">
+    <p>
+      Last week I had to create a PDF file with headers and a data table.<br>
+      I've done this a couple of times, but I always have to search for it in google.<br>
+      So I decided to write a little blog about it, so at least I know where to look if I get this task again.
+    </p>
+    <p>
+      There are different gems that you can use: PDFKit, Wicked PDF, Prawn.<br>
+      I decided to use Prawn. Don't ask me why, but that's how I decided
+    </p>
+    <h3>Gem</h3>
+    <p>Include the gem in your Gemfile and run bundle install</p>
+  </div>
+  <div class="code">
+    <br>
+    <p>gem 'prawn'</p>
+    <br>
+  </div>
+  <div class="body">
+    <h3>Register</h3>
+    <p>Register the PDF mime type in config/initializers/mime_types.rb</p>
+  </div>
+  <div class="code">
+    <br>
+    <p>Mime::Type.register "application/pdf", :pdf</p>
+    <br>
+  </div>
+  <div class="body">
+    <h3>Link</h3>
+    <p>Add link in fiew, pointing to a action in the controller</p>
+  </div>
+  <div class="code">
+    <br>
+    <p>&lt;%= link_to 'Download PDF', 'your_controller_action' %&gt;</p>
+    <br>
+  </div>
+  <div class="body">
+    <h3>Controller</h3>
+    <p>Add code to controller action</p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      def your_controller_action<br>
+      <span class="tab">@items = Item.all</span><br>
+      <span class="tab">pdf = ItemPdf.new(@items)</span><br>
+      <span class="tab">send_data pdf.render,</span><br>
+      <span class="tab"><span class="tab"><span class="tab">filename: "Items_#{DateTime.now.strftime('%m/%d/%Y')}.pdf",</span></span></span><br>
+      <span class="tab"><span class="tab"><span class="tab">type: "application/pdf"</span></span></span><br>
+      end
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <h3>Model</h3>
+    <p>
+      Create new folder app/pdfs<br>
+      Create file item_pdf.rb<br>
+    </p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      class ItemPdf &lt; Prawn::Document<br>
+      <br>
+      <span class="tab">def initialize(items)</span><br>
+      <span class="tab_two">super()</span><br>
+      <span class="tab_two">@items = items</span><br>
+      <span class="tab_two">header</span><br>
+      <span class="tab_two">table_content</span><br>
+      <span class="tab_two">number_pages "Page <page> of <total>", :at => [bounds.right - 80, 0], :align => :right, :size => 9</span><br>
+      <span class="tab">end</span><br>
+      <br>
+      <span class="tab">def header</span><br>
+      <span class="tab_two">bounding_box([10, cursor - 50], width: 270, heigth: 115) do</span><br>
+      <span class="tab_three">text 'Items', size: 19, style: :bold</span><br>
+      <span class="tab_three">text "as of #{DateTime.now.strftime('%m/%d/%Y')}"</span><br>
+      <span class="tab_two">end</span><br>
+      <br>
+      <span class="tab_two">bounding_box([150, cursor + 65], width: 270, height: 115) do</span><br>
+      <span class="tab_three">image "#{Rails.root}/public/images/logo.jpg", width: 230</span><br>
+      <span class="tab_two">end</span><br>
+      <span class="tab">end</span><br>
+      <br>
+      <span class="tab">def table_content</span><br>
+      <span class="tab_two">table item_rows do</span><br>
+      <span class="tab_three">row(0).font_style = :bold</span><br>
+      <span class="tab_three">self.header = true</span><br>
+      <span class="tab_three">self.row_colors = ['DDDDDD', 'FFFFFF']</span><br>
+      <span class="tab_three">self.column_widths = [330, 110, 50, 50]</span><br>
+      <span class="tab_two">end</span><br>
+      <span class="tab">end</span><br>
+      <br>
+      <span class="tab">def item_rows</span><br>
+      <span class="tab_two">rows = [['Code', 'Description', 'Qty', 'price']]</span><br>
+      <span class="tab_two">@items.each do |item|</span><br>
+      <span class="tab_three">rows &lt;&lt; [item.code, item.desc, item.qty, item.price]</span><br>
+      <span class="tab_two">end</span><br>
+      <span class="tab_two">rows</span><br>
+      <span class="tab">end</span><br>
+      end
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>Ok lets take this in parts:</p>
+    <p>
+      initialize: call all function.<br>
+      And we set a page counter on the right bottom.
+    </p>
+    <p>
+      header: this inserts a Title on the left of the pdf file and a image on the right.<br>
+      bounding_box takes the x and y coordinates for positioning and styles.<br>
+      You can set sizes for the image too.
+    </p>
+    <p>
+      table_content: makes a call to item_rows and gets back an array of the data that will populate the table.<br>
+      Including some styles. Like the first row as a header makes the text bold<br>
+      We set the header = true, so every page has a header too<br>
+      Then we set the row colors with 2 different colors, alternating white and grey<br>
+      And at the end we set the columns widths.
+    </p>
+    <p>
+      item_rows: we create the 2d array.
+    </p>
+    <h3>For more about the PDF formatting, check the Prawn manual <a href="http://prawnpdf.org/manual.pdf" target="_blank">Prawn</a></h3>
+  </div>
+  <footer class="footer">
+    <p>Posted by: Mat 05/01/2020</p>
+    <p>Contact information: <a href="mailto:mat@matyou.net">
+        mat@matyou.net</a>.
+    </p>
+    <p><a href="http://www.matyou.net/pages">Matyou Blog</a></p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="styles.css">
+  <title>Ruby Blocks</title>
+</head>
+<body>
+  <div class="bg">
+    <h1>Ruby Blocks</h1>
+  </div>
+  <div class="body">
+    <p>
+      I have read the book Metaprogramming Ruby 2 by Paolo Perrotta.
+      There's a chapter on blocks, and I've noticed that I should know more about that.
+    </p>
+    <h2>The Basic of Blocks.</h2>
+    <p>
+        Blocks are used for passing blocks of code to methods. Blocks are snippets of code that can be created to be executed later. <br>
+      You can define a block with either curly braces {} or the do...end keywords.<br>
+      A common convention is to use curly braces for single-line blocks and do...end for multiline blocks.
+    </p>
+    </div>
+    <div class="code">
+      <br>
+      <p>
+        [1, 2, 3].each { |number| puts number }<br><br>
+        [1, 2, 3].each do |number|<br>
+        <span class="tab">puts number</span><br>
+        end
+      </p>
+      <br>
+    </div>
+    <div class="body">
+    <h2>Blocks and Methods.</h2>
+    <p>
+      You can define a block only when you call a method. The block is passed straight into the method,<br>
+      and the method can call back to the block with the yield keyword.
+    </p>
+    <p>
+      Like a method, a block returns the result of the last line of code it evaluates.
+    </p>
+  </div>
+  <div class="code">
+    <br>
+    <p>def my_method<br>
+    <span class="tab"><b>yield</b></span><br>
+    end<br><br>
+    my_method { 'this is a block' }<br>
+    # => "this is a block"</p>
+    <br>
+  </div>
+  <div class="body">
+    <p>Yield can be used multiple times. The Block is executed as often as you call it.</p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      def my_method<br>
+      <span class="tab">yield</span><br>
+      <span class="tab">yield</span><br>
+      end<br><br>
+      my_method { puts 'hi' } # => hi<br>
+      <span style="margin-left:191px">hi</span>
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      Within a method, you can ask Ruby if the current call includes a block with the Kernel#block_given? method.
+      If you use yield when block_given? is false, you'll get a runtime error.
+      Because Ruby allows implicit block passing, you can call all methods with a block. If it doesn’t call yield, the block is ignored.
+    </p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      def my_method<br>
+      <span class="tab">return yield if block_given?</span><br>
+      <span class="tab">'no block'</span><br>
+      end<br><br>
+      my_method <span style="margin-left:106px"># => 'no block'</span><br>
+      my_method { 'with block' }&nbsp; # => 'with block'
+    </p>
+    <p>
+      'hello world'.split { puts 'Block' }<br>
+      # => ["hello", "world"]
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      If the called method does yield, the passed block is found and called with any arguments that were passed to the yield keyword.
+    </p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      def my_method<br>
+      <span class="tab">yield 'hello'</span><br>
+      end<br><br>
+      my_method { |string| 3.times { puts string } }<br>
+      # => hello<br>
+      <span style="margin-left:35px">hello</span><br>
+      <span style="margin-left:35px">hello</span><br>
+    </p>
+    <p>
+      def my_method<br>
+      <span class="tab">yield 2</span><br>
+      end<br><br>
+      my_method { |number| number * 10 } # => 20
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <h2>Explicit? Implicit?</h2>
+    <p>
+      Blocks can be explicit or implicit. In implicit, it is a nameless block and it is not passed as a parameter, it is executed using yield.
+      (Examples above.)
+      Explicit means that you give a name to the block in the parameter list.
+      Whenever it is needed we can pass it as a parameter and then we can call it using that parameter.
+      The &block argument is not a proper argument, so calling this method with anything else than a block will produce an ArgumentError.
+    </p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      def my_method(&block)<br>
+      <span class="tab">block.call</span><br>
+      end<br><br>
+      my_method { puts 'explicit block' }<br>
+      # => explicit block
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <h2>What is a Proc?</h2>
+    <p>
+      Proc objects are blocks of code that are stored in a local variable.
+      Once stored as a variable, the code may be called in different contexts and still access those variables.
+      To create a proc, you call Proc.new and pass it a block.
+    </p>
+  </div>
+  <div class="code">
+    <p>
+      proc = Proc.new { |s| puts "#{s}"}
+    </p>
+  </div>
+  <div class="body">
+    <p>Since a proc can be stored in a variable, it can also be passed to a method just like a normal argument.</p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      def my_method(proc)<br>
+      <span class="tab">proc.call("world")</span><br>
+      end<br><br>
+      proc = Proc.new { |s| puts "Hello #{s}"}<br>
+      my_method(proc) # => Hello world
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <h2>What is a Lambda?</h2>
+    <p>
+      A lambda is a way to define a block and its parameters with some special syntax.
+      Same as a proc, you can save it in a variable and use it later.
+    </p>
+  </div>
+  <div class="code">
+    <p>
+      my_lambda = -> { puts 'this is a lambda'}
+    </p>
+  </div>
+  <div class="body">
+    <p>
+      Defining a lambda won't run the code inside it, just like defining a method won't run the method,
+      you need to use the call method for that.
+      There are different ways to call a lambda, but the usual way is .call.
+    </p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      my_lambda = -> { puts 'this is a lambda' }<br><br>
+      my_lambda.call <span style="margin-left:40px"># => this is a lambda</span><br>
+      my_lambda.() <span style="margin-left:52px"># => this is a lambda</span><br>
+      my_lambda[] <span style="margin-left:55px"># => this is a lambda</span><br>
+      my_lambda.=== <span style="margin-left:35px"># => this is a lambda</span>
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      Lambdas are essentially procs with some distinguishing factors.
+      They are more like "regular" methods in two ways: they enforce the number of arguments
+      passed when they're called and they use "normal" returns.
+      When calling a lambda that expects an argument without one,
+      or if you pass an argument to a lambda that doesn't expect it, Ruby raises an ArgumentError.
+    </p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      two_times = ->(x) { x * 2 }<br><br>
+      two_times.call(5) # => 10<br><br>
+      two_times.call<br>
+      # => ArgumentError: wrong number of arguments (0 for 1) 
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <h2>Lambdas vs Procs</h2>
+    <p>
+      Lambdas and Procs treat the return keyword differently. Lambdas handle return they way we are used to.
+      We exit out of the closure. Procs, on the other hand return from the method enclosing the Proc.
+    </p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      def call_proc<br>
+      <span class="tab">puts 'hello'</span><br>
+      <span class="tab">my_proc = Proc.new { return }</span><br>
+      <span class="tab">my_proc.call</span><br>
+      <span class="tab">puts 'world'</span><br>
+      end<br><br>
+      call_proc # => hello<br>
+    </p>
+    <br>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      def call_lambda<br>
+      <span class="tab">puts 'hello'</span><br>
+      <span class="tab">my_lambda = -> { return }</span><br>
+      <span class="tab">my_lambda.call</span><br>
+      <span class="tab">puts 'world'</span><br>
+      end<br><br>
+      call_lambda # => hello<br>
+      <span style="margin-left:115px">world</span>
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <h2>Wrapping Up</h2>
+    <p>
+      We learned how Blocks work, the difference between Ruby Procs and Lambdas and how they handle the return keyword.
+      We didn't cover closers and the curry method. We will talk about that on the next Blog.
+    </p>
+  </div>
+  <footer class="footer">
+    <p>Posted by: Mat</p>
+    <p>Contact information: <a href="mailto:mat@matyou.net">
+        mat@matyou.net</a>.
+    </p>
+    <p><a href="http://www.matyou.net/pages">Matyou Blog</a></p>
+  </footer>
+</body>
+</html>

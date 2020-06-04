@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="styles.css">
+  <title>Map/Each</title>
+</head>
+<body>
+  <div class="bg">
+    <h1>Rubys Each and Map</h1>
+  </div>
+  <div class="body">
+    <h3>Rubys each and map are methods that we can use with Array, Hashes and Ranges.</h3>
+    <h2>each</h2>
+    <p>
+      We learned in an earlier blog about blocks. Each takes a list as the frist argument and a block as the second argument.
+      For every element of the list, it runs the block passing the current element as a parameter.
+    </p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      # => ["a", "b", "c"].each { |element| puts element }<br>
+      a<br>
+      b<br>
+      c<br>
+      # => ["a", "b", "c"]
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      As you can see in the example above, each always returns the original object.
+      If we want to return a new array with the changes, then it would be like the code below.
+    </p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        new_array = []<br>
+        ["a", "b", "c"].each do |element|<br>
+        <span class="tab">new_array.push(element.upcase)</span><br>
+        end<br>
+        # => ["a", "b", "c"]<br>
+        new_array<br>
+        # => ["A", "B", "C"]
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      As you can see, each returns again the original unchanged object. If we return the new created array we can see the changes.
+      With each we can loop through a hash. The difference to the example before, the block receives two arguments.
+      The first argument is the key and the second argument the value.
+    </p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        my_hash = { name: "Joe", age: 30 }<br>
+        my_hash.each do |key, value|<br>
+        <span class="tab">puts "key: #{key}, value: #{value}"</span><br>
+        end<br>
+        key: name, value: Joe<br>
+        key: age, value: 30<br>
+        # => {name: "Joe", age: 30}
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <h2>map</h2>
+    <p>
+      Map is like each BUT it returns a new array with the changed elements of the given object.
+    </p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        ["a", "b", "c"].map { |e| e.upcase }<br>
+        #  => ["A", "B", "C"]<br><br>
+        [1, 2, 3].map { |e| e.to_s }<br>
+        # => ["1", "2", "3"]
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      Map has a shorthand with the same result.
+    </p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+          ["a", "b", "c"].map(&:upcase)<br>
+          #  => ["A", "B", "C"]<br><br>
+          [1, 2, 3].map(&:to_s)<br>
+          # => ["1", "2", "3"]
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      Map can make changes in a hash and convert the hash into an array.
+    </p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      my_hash = { name: "Joe", city: "Dallas" }<br>
+      my_hash.map { |k, v| v.downcase }<br>
+      # => ["joe", "dallas"]<br><br>
+      my_hash.map { |k, v| [k, v.downcase] }<br>
+      # => [[:name, "joe"], [:city, "dallas"]]
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <h2>Wrapping Up</h2>
+    <p>
+      Use map to change an array or hash and use the returned array.<br>
+      Use each to iterate over an array or hash and execute a block over each element,
+      but the returned array is the not changed array.
+    </p>
+  </div>
+  <footer class="footer">
+    <p>Posted by: Mat</p>
+    <p>Contact information: <a href="mailto:mat@matyou.net">
+        mat@matyou.net</a>.
+    </p>
+    <p><a href="http://www.matyou.net/pages">Matyou Blog</a></p>
+  </footer>
+</body>
+</html>

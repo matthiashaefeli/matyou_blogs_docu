@@ -1,0 +1,41 @@
+.bg {
+  max-width: 60%;
+  margin: auto;
+  height: 250px;
+  background: url(code.png) no-repeat center top fixed;
+  text-align: center;
+  color: white;
+}
+
+.bg h1 {
+  font-size: 3.5em;
+  padding-top: 100px;
+}
+
+.body {
+  max-width: 50%;
+  margin: auto;
+  text-align: center;
+}
+
+.code {
+  width: 350px;
+  margin: auto;
+  text-align: left;
+  background-color:	#E8E8E8;
+}
+
+.code p {
+  margin-left: 10%
+}
+
+.tab {
+  margin-left: 6%;
+}
+
+.footer {
+  text-align: center;
+  max-width: 50%;
+  padding-top: 150px;
+  margin: auto;
+}

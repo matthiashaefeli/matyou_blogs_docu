@@ -1,0 +1,79 @@
+<!DOCTYPE html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="styles.css">
+  <title>Concerns</title>
+</head>
+<body>
+  <div class="bg">
+     <h1></h1>
+  </div>
+  <div class="body">
+    <h1>Concerns and rails</h1>
+    <p>Today i worked on a rails application and got to the point where i had the same code in several models.<br>
+      So I thought I would make a helper for that.<br>
+      I found out very quickly that there were no helper for the models. After googeling, i decided that i need a Concern
+    </p><br>
+    <p>With ActiveSupport::Concern you can extract pieces of code from your model to separate concerns(modules), and then include them back into the model.</p>
+    <br>
+    <h3>Concerns folder and path</h3>
+    <p>Add folder called concerns in app/models</p>
+    <p>Add path in appliction.rb</p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      config.autoload_paths += %W(<br>
+      #{config.root}/app/controllers/concerns<br>
+      #{config.root}/app/models/concerns<br>
+      )
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <h3>Create Concern</h3>
+    <p>In the concern folder add the new concern.</p>
+    <p>We call our concern: CheckThisOut app/models/concerns/check_this_out.rb</p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      module CheckThisOut<br>
+        <span class="tab">extend ActiveSupport::Concern</span><br><br>
+        <span class="tab">def do_something</span><br>
+        <span class="tab"><span class="tab">here comes the code....</span></span><br>
+        <span class="tab">end</span><br>      
+      end
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <h3>Add Concern to model</h3>
+    <p>And now all we have to do is to include the concern in the model:</p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      class MyModel < ActiveRecord::Base<br>
+      <span class="tab">include CheckThisOut</span><br>
+      end
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>And that's it. I have added code from my model in a concern, and now I can use the same code in other models too.</p>
+  </div>
+  <footer class="footer">
+    <p>Posted by: Mat 04/07/2020</p>
+    <p>Contact information: <a href="mailto:mat@matyou.net">
+        mat@matyou.net</a>.
+    </p>
+    <p><a href="http://www.matyou.net/pages">Matyou Blog</a></p>
+  </footer>
+</body>
+</html>
+
+
+

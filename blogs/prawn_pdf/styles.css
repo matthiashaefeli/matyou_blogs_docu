@@ -1,0 +1,60 @@
+.bg {
+  max-width: 60%;
+  margin: auto;
+  height: 350px;
+  background: url(pdf.jpg) no-repeat center top fixed;
+  text-align: center;
+  color: black;
+}
+
+.bg h1 {
+  font-size: 3.5em;
+  padding-top: 100px;
+}
+
+.body {
+  max-width: 50%;
+  margin: auto;
+  text-align: center;
+}
+
+.code {
+  width: 680px;
+  margin: auto;
+  text-align: left;
+  background-color:	#E8E8E8;
+}
+
+.code_wide {
+  width: 60%;
+  margin: auto;
+  text-align: left;
+  background-color:	#E8E8E8;
+}
+
+.code_wide p {
+  margin-left: 10%
+}
+
+.code p {
+  margin-left: 10%
+}
+
+.tab {
+  margin-left: 6%;
+}
+
+.tab_two {
+  margin-left: 12%;
+}
+
+.tab_three {
+  margin-left: 18%;
+}
+
+.footer {
+  text-align: center;
+  max-width: 50%;
+  padding-top: 150px;
+  margin: auto;
+}

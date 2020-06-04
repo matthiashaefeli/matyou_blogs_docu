@@ -1,0 +1,243 @@
+<!DOCTYPE html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="styles.css">
+  <title>Rails, Action Mailer and Gmail</title>
+</head>
+<body>
+  <div class="bg">
+    <!-- <h1>Rails, Action Mailer and Gmail</h1> -->
+  </div>
+  <div class="body">
+    <h1>Rails, Action Mailer and Gmail</h1>
+    <p>
+      I have a rails 6 application with a client model.<br>
+      Every time we create a new client i want to send a Welcome email to the client, and a notification to the web page owner, that there is a new client.<br>
+      I use Ruby 2.7.0 and Rails 6.
+    </p>
+    <p>
+      We have already a basic Client Model and the Clients Controller with a create method.
+    </p>
+    <p>
+      First step is to create a mailer. In this case the mailer will be use in the ClientsController so we will name it ClientMailer
+    </p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        rails generate mailer ClientMailer
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>This will create the following files</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        create  app/mailers/client_mailer.rb<br>
+        invoke  erb<br>
+        create  app/views/client_mailer<br>
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      Let's check out the app/mailers folder:<br>
+      We will find the application_mailer.rb and the created client_mailer.rb files.
+    </p>
+    <p>In the application_mailer.rb is defined from where to send the emails and what layout to use:</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        class ApplicationMailer < ActionMailer::Base<br>
+        <span class="tab">default from: 'example@mail.com'</span><br>
+        <span class="tab">layout 'mailer'</span><br>
+        end
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      The new ClientMailer class works similarly to a normal controlller.<br>
+      This mailer controller prepares content in form of an eamil and delivers it.<br>
+      If we want to create an email, we just add a new method as we would create a method in a normal controller.<br>
+      Lets add a method to send the client notice email and another method to send the welcome email to the new client.
+    </p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        class ClientMailer < ApplicationMailer<br>
+        <span class="tab">def new_client_email</span><br>
+        <span class="tab"><span class="tab">@client = parmas[:client]</span></span><br>
+        <br>
+        <span class="tab"><span class="tab">mail(to: 'example@mail.com', subject: 'You got a new Client'</span></span><br>
+        <span class="tab">end</span><br>
+        <br>
+        <span class="tab">def welcome_email</span><br>
+        <span class="tab"><span class="tab">@client = parmas[:client]</span></span><br>
+        <br>
+        <span class="tab"><span class="tab">mail(to: @client.email, subject: 'Welcome to example'</span></span><br>
+        <span class="tab">end</span><br>
+        end
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      Replace the example@mail.com with the email you want to use, hidden away as an environment variable.
+    </p>
+    <p>
+      The params[:client] will be provided when we tell the ClientMailer to send the email, we will see that later.
+    </p>
+    <p>
+      The @client is uses like in a normal controller to get the object to the view.<br>
+      Let's create the view for the new_client_email. Be sure to use the same name as the method.<br>
+      Create a new file new_client_email.html.erb in the app/views/client_mailer/ folder.<br>
+      And as best practice we create a text version of the email in case the receiver doesn't use HTML email.<br>
+      Let's create the file new_client_email.text.erb in the same folder:
+    </p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        # new_client_email.html.erb<br><br>
+        &lt;h1&gt;You got a new Client&lt;/h1&gt;<br>
+        &lt;br&gt;<br>
+        &lt;p&gt;Client Details:&lt;/p&gt;<br>
+        &lt;p&gt;Name: &lt;%= @client.name %&gt;&lt;/p&gt;<br>
+        &lt;p&gt;email: &lt;%= @client.email %&gt;&lt;/p&gt;<br>
+      </p>
+    <br>
+  </div>
+  <br>
+  <div class="code">
+    <br>
+      <p>
+        # new_client_email.text.erb<br><br>
+        You got a new Client<br>
+        <br>
+        Client Details:<br>
+        Name: &lt;%= @client.name %&gt;<br>
+        email: &lt;%= @client.email %&gt;<br>
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>And the same for the welcome email for the Client</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        # welcome_email.html.erb<br><br>
+        &lt;h1&gt;Welcome &lt;%= @client.name %&gt; &lt;/h1&gt;<br>
+        &lt;br&gt;<br>
+        &lt;p&gt;We will contact you as soon as possible.&lt;/p&gt;<br>
+      </p>
+    <br>
+  </div>
+  <br>
+  <div class="code">
+    <br>
+      <p>
+        # welcome_email.text.erb<br><br>
+        Welcome &lt;%= @client.name %&gt;<br>
+        <br>
+        We will contact you as soon as possible.
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      Now that we have the email content, we have to tell the ClientMailer to send the emails, after creating the client.<br>
+      In the ClientsController in the create method after the save we add the following lines: 
+    </p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        # ClientsController<br><br>
+        def create<br>
+        <span class="tab">....code</span><br>
+        <span class="tab">if @client.save</span><br>
+        <span class="tab"><span class="tab">ClientMailer.with(client: @client).new_client_email.deliver_later</span></span><br>
+        <span class="tab"><span class="tab">ClientMailer.with(client: @client).welcome_email.deliver_later</span></span><br>
+        <span class="tab"><span class="tab">....code</span></span><br>
+        <span class="tab">end</span><br>
+        end
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      The .with(client: @client) we send the param client to the mailer method.<br>
+      Remember? we set the @client in the mailer controller with the params[:client]<br>
+    </p>
+    <p>
+      And now we need to configure our rails app to send emails via Gmail.<br>
+      in the config/environments/production.rb we add the following code:
+    </p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        config.action_mailer.delivery_method = :smtp<br>
+        host = 'example.com'<br>
+        config.action_mailer.default_url_options = { host: host }<br>
+        <br>
+        # SMTP settings for gmail<br><br>
+        connfig.action_mailer.smtp_settings = {<br>
+        <span class="tab">:address => "smtp.gmail.com",</span><br>
+        <span class="tab">:port => 587,</span><br>
+        <span class="tab">:user_name => 'your user_name',</span><br>
+        <span class="tab">:password => 'your passoword',</span><br>
+        <span class="tab">:authentication => "plain",</span><br>
+        <span class="tab">:enable_starttls_auto => true,</span><br>
+        }
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      The gmail user_name and gmail password should be hidden as environment variables.<br>
+      I recommend that you enable the 2-step verification and registrate a app password for your gmail account,<br>
+      or you run into problems with Gmail blocking the emails.<br>
+      Below i will show you how to do that.
+    </p>
+    <p>
+      For development use add the following code to config/environments/development.rb:
+    </p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        host = localhost:3000<br>
+        config.action_mailer.default_url_options = { :host => 'localhost:3000', protocol: 'http' }
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      If your Gmail account doesn't have 2-step verification we have to change that.<br>
+      In your goolge account settings go to the Security tab then you will find Signing in to Google and then 2-Step Verification. Follow the instructions.<br>
+      Now that we have the 2-Step verification we have to add a app password.<br>
+      Go to your Google accounts settings and go to the Security tab, then you will find Signing in to Google and click on App passwords.<br>
+      Next, select Other(Custom name) in the select dropdown and enter the name of your app. Click Generate and you new app password<br>
+      will appear on the screen. Copy the password (after closing the window you will not have access to the password again).<br>
+      Now replace the gmail password in config/environments/production.rb with the new password.
+    </p>
+    <p>And that's it.</p>
+  </div>
+  <footer class="footer">
+    <p>Posted by: Mat 04/21/2020</p>
+    <p>Contact information: <a href="mailto:mat@matyou.net">
+        mat@matyou.net</a>.
+    </p>
+    <p><a href="http://www.matyou.net/pages">Matyou Blog</a></p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,29 @@
+.bg {
+  max-width: 60%;
+  margin: auto;
+  height: 250px;
+  background: url(server.png) no-repeat center top fixed;
+  text-align: center;
+  color: white;
+}
+
+.bg h1 {
+  padding-top: 100px;
+}
+
+.body {
+  max-width: 50%;
+  margin: auto;
+  text-align: center;
+}
+
+.body span {
+  font-size: 1.2em;
+}
+
+.footer {
+  text-align: center;
+  max-width: 50%;
+  padding-top: 150px;
+  margin: auto;
+}

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="styles.css">
+  <title>What I learned in the last Ruby meetup</title>
+</head>
+<body>
+  <div class="bg">
+  </div>
+  <div class="body">
+    <h1>What I learned in the last Ruby meetup</h1>
+    <p>
+      Yesterday I was at the ruby meetup, we had a great presentation about Improving Code Quality to Improve Application Security.<br>
+      I learned a lot about how to improve code quality and not be lazy when I write code.<br>
+      The presenter showed us different code quality checking tools that we can use every day.<br>
+    </p>
+    <h3><a href="https://github.com/yorickpeterse/ruby-lint/" target="_blank">ruby-lint</a></h3>
+    <p>
+      ruby-lint is a static code analysis tool for Ruby.<br>
+      It primarily focuses on logic related errors such as the use of non existing variables instead of focusing on semantics (e.g. the amount of characters per line).
+    </p>
+    <h3><a href="https://github.com/rubocop-hq/rubocop" target="_blank">rubocop</a></h3>
+    <p>
+      RuboCop is a Ruby static code analyzer and code formatter.<br>
+      Out of the box it will enforce many of the guidelines outlined in the community Ruby Style Guide.
+    </p>
+    <h3><a href="https://github.com/flyerhzm/rails_best_practices" target="_blank">rails_best_practices</a></h3>
+    <p>rails_best_practices is a code metric tool to check the quality of Rails code.</p>
+    <p>
+      The big difference between ruby-lint and RuboCop is that ruby-lint focuses primarily on technical problems<br>
+      such as the use of undefined methods/variables, unused variables/method arguments and more.<br>
+      RuboCop on the other hand focuses mostly on style related issues based on a community driven Ruby style guide.
+    </p>
+    <h3>.tr vs .gsub</h3>
+    <p>
+      Use tr when you want to replace (translate) single characters.<br>
+      tr matches on single characters (not via a regular expression),<br>
+      therefore the characters don't need to occur in the same order in the first string argument.<br>
+      When a character is found, it is replaced with the character that is found at the same index in the second string argument:
+    </p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      2.7.0 :001 > 'abcdef'.tr('dcb', '123')<br>
+      => "a321ef"<br>
+     2.7.0 :002 > 'abcdef'.gsub('dcb', '123')<br>
+      => "abcdef"<br>
+     2.7.0 :003 > 'abcdef'.gsub('bcd', '123')<br>
+      => "a123ef"<br>
+     2.7.0 :004 > 'abcdef'.tr('cbd', '123')<br>
+      => "a213ef"
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <h3>.drop(1) vs slice(1..-1)</h3>
+    <p>
+      .drop() returns a empty array if the array is empty, slice returns nil
+    </p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      2.7.0 :010 > [1, 2, 3, 4, 5].drop(1)<br>
+      => [2, 3, 4, 5]<br>
+      2.7.0 :011 > [1, 2, 3, 4, 5].slice(1..-1)<br>
+      => [2, 3, 4, 5]<br>
+      2.7.0 :012 > [].drop(1)<br>
+      => []<br>
+      2.7.0 :013 > [].slice(1..-1)<br>
+      => nil
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <h3>.length vs .size vs .count</h3>
+    <p>Check this out <a href="https://github.com/JuanitoFatas/fast-ruby/blob/master/code/array/length-vs-size-vs-count.rb" target="_blank">fast-ruby</a></p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      2.0.0-p648 :001 > require 'benchmark/ips'<br>
+      => true<br>
+      2.0.0-p648 :002 > ARRAY = [*1..100]<br>
+      2.0.0-p648 :003 ><br>
+      2.0.0-p648 :004 >   Benchmark.ips do |x|<br>
+      2.0.0-p648 :005 >       x.report("Array#length") { ARRAY.length }<br>
+      2.0.0-p648 :006?>     x.report("Array#size") { ARRAY.size }<br>
+      2.0.0-p648 :007?>     x.report("Array#count") { ARRAY.count }<br>
+      2.0.0-p648 :008?>     x.compare!<br>
+      2.0.0-p648 :009?>   end<br>
+      Warming up --------------------------------------<br>
+              Array#length   164.651k i/100ms<br>
+                Array#size   164.807k i/100ms<br>
+              Array#count   161.425k i/100ms<br>
+      Calculating -------------------------------------<br>
+              Array#length     13.248M (± 3.0%) i/s -     66.190M<br>
+                Array#size     13.078M (± 3.2%) i/s -     65.428M<br>
+              Array#count     10.836M (± 3.2%) i/s -     54.239M<br>
+              <br>
+      Comparison:<br>
+              Array#length: 13247881.7 i/s<br>
+                Array#size: 13078381.0 i/s - same-ish: difference falls within error<br>
+              Array#count: 10836024.0 i/s - 1.22x  slower<br>
+    </p>
+    <br>
+  </div>
+  <footer class="footer">
+    <p>Posted by: Mat March 12, 2020</p>
+    <p>Contact information: <a href="mailto:mat@matyou.net">
+        mat@matyou.net</a>.
+    </p>
+    <p><a href="http://www.matyou.net/pages">Matyou Blog</a></p>
+  </footer>
+</body>
+</html>

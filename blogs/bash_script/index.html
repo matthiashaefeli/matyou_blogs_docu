@@ -1,0 +1,216 @@
+<!DOCTYPE html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="styles.css">
+  <title>Bash Scripts</title>
+</head>
+<body>
+  <div class="bg">
+    <!-- <h1>SSH SCP FTP SFTP Connections</h1> -->
+  </div>
+  <div class="body">
+    <h2>Create a bash script to send errors in the logfile by email.</h2>
+    <p>
+      This week I learned about bash scripts, how to create and use them.
+      It was my first time working with the Linux command line.
+      I knew how to navigate in the different folders and how to make or delete new folders,
+      how to make a new file, but that was about it. So I was pretty nervous what to expect.
+      My goal was to send an email if there was an error in the rails app. I have already set up Elasticsearch and Kibana.
+      My rails app is on a different server then my elasticsearch, so we did a cronjob to send the rails log file every 5 minutes
+      to the elastic server. The first step was to create a bash script to add this logfile to elasticsearch and then create
+      a script to check if there are errors and send an email with the errors.
+    </p>
+    <h3>Before we start, what is a bash script?</h3>
+    <p>
+      A Bash script is a plain text file which contains a series of commands.
+      These commands are a mixture of commands we would normally type ourselves on the command line.<br>
+      <b>Anything you can run normally on the command line can be put into a script and it will do exactly the same thing.<br>
+        Similarly, anything you can put into a script can also be run normally on the command line and it will do exactly the same thing.</b><br>
+        Scripts are used to run a series of commands.
+    </p>
+    <h3>Create a bin directory.</h3>
+    <p>The first step is to create a bin directory.
+      bin is the standard naming convention of a subdirectory that contains executable programs.<br>
+      Make sure you're in the main user directory. ( /Users/you ). Type <b>cd ~</b>. And to confirm the location type <b>pwd</b><br>
+      Create the bin directory:
+    </p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      cd ~<span style="margin-left:75px;color:grey;"># this takes you to /Users/you</span><br>
+      mkdir bin<span style="margin-left:40px;color:grey;"># create the bin directory</span>
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <h3>Export your bin directory to the PATH.</h3>
+    <p>
+      Open .bash_profile, which is located at /Users/you/.bash_profile, and add the line above to
+      the file. If this file doesn't exist. create it.
+    </p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+        export PATH=$PATH:/Users/you/bin
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <h3>Create a script file.</h3>
+    <p>
+      Go to your bin folder and create a file called el_update.sh.<br>
+      Open the file in your text editor of choise. I am using vim in this example.
+    </p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      touch el_update.sh<span style="margin-left:5px;color:grey;"># creates the el_update.sh file</span><br>
+      vim el_update.sh<span style="margin-left:5px;color:grey;"># opens the file with vim</span><br>
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <h3>Add commands to the script file.</h3>
+    <p>
+      First on the top of the file we add a shebang (#!/bin/bash), it tells the shell what program to interpret the script with, when executed.<br>
+      In this case, the script is to be interpreted and run by the bash shell.<br>
+      With the second line we go to the directory where the log file located is.<br>
+      And the last line we run a command to feed the logfile to elastic.<br>
+      I will not go deeper into the topic of how the command works, its a different blog.
+    </p>
+  </div>
+  <div class="code_wide">
+    <br>
+    <p>
+      #!/bin/bash<br><br>
+      cd /home/admin/logs<br>
+      curl -H 'Content-Type: application/x-ndjson' -XPOST 'http://192.168.1.1:9200/log/logs/_bulk?pretty' --data-binary @logstasher.log
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <h3>Make it executable.</h3>
+    <p>If you try tu run the file now, it won't work. We have to make it an executable file by changing the permission.<br>
+    Make sure you are in the bin directory, and run code below.</p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      chmod 755 el_update.sh<span style="margin-left:5px;color:grey;"># make file executable</span><br>
+      el_update.sh<span style="margin-left:5px;color:grey;"># run script</span><br>
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <h3>Create bash script to check if there are errors and send email.</h3>
+    <p>
+      So, the next bash script will be a little more complicated. We have to check if there are errors and then send an email to the developer.<br>
+      Create a new script called error_email.sh and don't forget to make it executable.<br>
+      I will not go deeper in the elastic query, its a different blog.<br>
+      The first query we use to check if there are errors and how many, and we strore that in a variable (total).<br>
+      The second query is to get all the keywords of the error, and we store that in a variable (error_messages).<br>
+      Then in a if statement we check if there are errors, and we create the text and we send the email with the error keywords.
+    </p>
+  </div>
+  <div class="code_wide">
+    <br>
+    <p>
+    #!/bin/bash<br>
+    error_messages=$(curl -XGET --header 'Content-Type: application/json' http://192.168.1.1:9200/log/logs/_search -d '{<br>
+        "query": {<br>
+        "bool": {<br>
+          "must":<br>
+            {"exists": {"field": "log.payload.exception"}<br>
+            },<br>
+            "filter": {<br>
+              "range": {<br>
+                "log.time": {<br>
+                 "gte": "now-18m"<br>
+                }<br>
+              }<br>
+            }<br>
+        }<br>
+      },"size": 0,<br>
+        "aggs": {<br>
+          "status": {<br>
+            "terms": {<br>
+            "field": "log.payload.exception.keyword"<br>
+            }<br>
+          }<br>
+        }<br>
+    }'| jq -r '.aggregations.status.buckets[].key' )<br><br>
+
+    total=$(curl -XGET --header 'Content-Type: application/json' http://192.168.1.1:9200/log/logs/_search -d '{<br>
+      "query": {<br>
+        "bool": {<br>
+          "must":<br>
+            {"exists": {"field": "log.payload.exception"}<br>
+            },<br>
+            "filter": {<br>
+              "range": {<br>
+                "log.time": {<br>
+                 "gte": "now-18m"<br>
+                }<br>
+              }<br>
+            }<br>
+        }<br>
+      }<br>
+    }' | jq -r '.hits.total')<br><br>
+    
+    if [ $total -gt 0 ]<br>
+    then<br>
+            if [ $total == 1 ]<br>
+            then<br>
+                    error="error"<br>
+            else<br>
+                    error="errors"<br>
+            fi<br>
+     printf "$total $error on server_name in the last 15 minutes!\n$error:\n $error_messages\nFor more details please login at: http://192.168.1.1:80" | mail -s "There are Errors on server_name" you@you.com<br>
+    fi</p>
+    <br>
+  </div>
+  <div class="body">
+    <p>After the elastic query we se the <b>|</b> and then <b>jq</b><br>
+    We need the pipe to use the result of the query and do something with it. jq is a lightweight and flexible command-line JSON processor, we need it to parse the JSON object and get what we need.
+    And finaly we have <b>mail</b>.The mail command is an essential one that should be available on any linux server so that various services and other web applications can generate and transmit emails.<br>
+  </p>
+  <h3>Add cron jobs.</h3>
+  <p>
+    At the end we have to add the cronjobs to run the script every 10 minutes.<br>
+    crontab -e is the best way to do it - this will allow you to easy edit per-user crontabs.<br>
+  </p>
+  </div>
+  <div class="code_wide">
+    <br>
+    <p>
+      crontab -e<span style="margin-left:5px;color:grey;"># open crontabs</span><br>
+      <span style="margin-left:5px;color:grey;"># add cronjobs</span><br>
+      0,12,22,32,42,52 * * * * /home/you/bin/updatelogs.sh<br>
+      0,14,24,34,44,54 * * * * /home/you/bin/error_email.sh
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>We use different times to run the scripts.The script to move the logfile runs every 10 minutes. to be sure that the other scripts run after the moving of the logfile we set different times.
+       We need to run first the updatelogs script and then the error_email script. I am sure there would be a better method to make sure that the other scripts run first, maybe a callback function or something
+       like that.(maybe a good time to google it).
+    </p>
+    <p>
+      I was able to add the logfile to elastic and check if there are errors, and then send an email to myself with the errors.<br>
+      I learned more about the linux commands and how to use them in a script file.<br>
+      There is still a long way to go.I hope that if I read this in the future, I can do it better.</p>
+  </div>
+  <footer class="footer">
+    <p>Posted by: Mat 06/10/2019</p>
+    <p>Contact information: <a href="mailto:mat@matyou.net">
+        mat@matyou.net</a>.
+    </p>
+    <p><a href="http://www.matyou.net/pages">Matyou Blog</a></p>
+  </footer>
+</body>
+</html>

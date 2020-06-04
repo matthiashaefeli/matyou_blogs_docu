@@ -1,0 +1,97 @@
+<!DOCTYPE html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="styles.css">
+  <title>Process Limits</title>
+</head>
+<body>
+  <div class="bg">
+    <h1></h1>
+  </div>
+  <div class="body">
+    <h1>Process Limits</h1>
+    <p>
+      Last Week I had an interesting case.<br>
+      In our rails app, on the startup we open different files and read the first lines.<br>
+      In production and on different development environments that works perfect.<br>
+      But on other development environments the app crashes every time.<br>
+      The only error we get, is: Can't read the file file_name.<br>
+    </p>
+    <p>
+      First we checked if we had other different file permissions.<br>
+      That was not the case.
+    </p>
+    <p>
+      Then we figured out that if we do:
+    </p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        file = File.open(filename)<br>
+        lines = file.readlines<br>
+        lines.each do |line|<br>
+        <span class="tab">do_something</span><br>
+        end<br>
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      The file will be closed after a while, however, we don't know when, so many files may be open ( high garbage collection )
+    </p>
+    <p>
+      So we changed that code to:
+    </p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      File.open(filename) do |file|<br>
+      <span class="tab">lines = file.readlines</span><br>
+      <span class="tab">lines.each do |line|</span><br>
+      <span class="tab_two">do_something</span><br>
+      <span class="tab">end</span><br>
+      end
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>
+      The file close automatically after the end of the process( no garbage collection)
+    </p>
+    <p>
+      So this helped in some of the development environments, but on others we still had the same problem.
+    </p>
+    <p>
+      After setting Pry on different locations we figured out that we have still the problem with to many open files (Errno::EMFILE).<br>
+      More research and we figured out that Errno::EMFILE is due to the ruby process opening too many files.<br>
+      ulimit -- get and set process limits. This limit can be seen and set with
+    </p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      $ ulimit -n<br>
+      256<br>
+      $ ulimit -n 1024<br>
+      $ ulimit -n<br>
+      1024
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>We changed that limit and voila the problem was gone!</p>
+    <p>More about ulimit: <a href="https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/ulimit.3.html">developer.apple.com</a></p>
+  </div>
+  <footer class="footer">
+    <p>Posted by: Mat 05/18/2020</p>
+    <p>Contact information: <a href="mailto:mat@matyou.net">
+        mat@matyou.net</a>.
+    </p>
+    <p><a href="http://www.matyou.net/pages">Matyou Blog</a></p>
+  </footer>
+</body>
+</html>
