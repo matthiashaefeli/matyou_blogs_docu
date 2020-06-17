@@ -38,8 +38,8 @@ end
 ```
 
 ```
-2.0.0-p648 :027 > converter('MMCMDCDCXCLXLCIXVIVI')
- => 4080
+2.0.0-p648 :056 > converter('MMCMLXXX')
+ => 2980
 ```
 
 ```
