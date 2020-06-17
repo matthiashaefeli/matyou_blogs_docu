@@ -25,7 +25,7 @@ Then we create the function.
 First we set the result to 0. Then we loop over each key in the hash and check if the first index of the given roman number is a key in the hash. If we find the key we add the value to the result. Then we delete the key in the roman number.
 
 ```
-def convirt(roman)
+def converter(roman)
   result = 0
   @data.each do |key, val|
     while roman.index(key) == 0
@@ -38,12 +38,12 @@ end
 ```
 
 ```
-2.0.0-p648 :027 > convirt('MMCMDCDCXCLXLCIXVIVI')
+2.0.0-p648 :027 > converter('MMCMDCDCXCLXLCIXVIVI')
  => 4080
 ```
 
 ```
-2.0.0-p648 :028 > convirt('XIV')
+2.0.0-p648 :028 > converter('XIV')
  => 14
 ```
 
