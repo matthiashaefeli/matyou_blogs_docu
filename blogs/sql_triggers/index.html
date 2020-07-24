@@ -1,0 +1,74 @@
+<!DOCTYPE html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="styles.css">
+  <title>Triggers</title>
+</head>
+<body>
+  <div class="bg">
+     <h1></h1>
+  </div>
+  <div class="body">
+    <h1>SQL Triggers</h1>
+    <h2>How to create a trigger on a specific column and insert data into another table.</h2>
+    <p>We have a table like:</p>
+  </div>
+  <div class="code">
+    <br>
+    <p>
+      create table users (<br>
+        <span class="tab">id INT IDENTITY(1,1) PRIMARY KEY,</span><br>
+        <span class="tab"></span>name char(100) not null,</span><br>
+        <span class="tab"></span>date datetime not null,</span><br>
+        <span class="tab"></span>status varchar(1) not null</span><br>
+      )
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>And we want a trigger on the column status, if the status changes from whatever to 'O'</p>
+    <p>then we want a new entrance in another table with the ID of this row.</p>
+  </div>
+  <div class="code_wide">
+    <br>
+    <p>
+      CREATE TRIGGER change_status ON users<br>
+      AFTER UPDATE<br>
+      AS<br>
+      IF UPDATE (status)<br>
+      BEGIN<br>
+        <span class="tab">SET NOCOUNT ON;</span><br>
+        <span class="tab">DECLARE @id INT;</span><br>
+        <span class="tab">DECLARE @status varchar(1);</span><br>
+        <span class="tab">DECLARE @oldStatus varchar(1);</span><br><br>
+
+        <span class="tab">SELECT @oldStatus = status from deleted i;</span><br>
+        <span class="tab">SELECT @id = id FROM inserted i;</span><br>
+        <span class="tab">SELECT @status = status FROM inserted i;</span><br><br>
+
+        <span class="tab">IF (@status = 'O' AND @status != @oldStatus)</span><br>
+        <span class="tab">INSERT INTO user_status (id, date)</span><br>
+        <span class="tab">VALUES (@id, GETDATE())</span><br>
+      END<br>
+    </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>First we create the trigger.</p>
+    <p>After a update on the table we check if the update was on the specific column.</p>
+    <p>We declare 3 variables and add the values to the variables.</p>
+    <p>The id of the row, the old status and the new status.</p>
+    <p>Then we check if the new value is 'O' and if the new value is not the same as the old value.</p>
+    <p>If that is all true we insert into the other table the id and the date.</p>
+  </div>
+  <footer class="footer">
+    <p>Posted by: Mat 07/24/2020</p>
+    <p>Contact information: <a href="mailto:mat@matyou.net">
+        mat@matyou.net</a>.
+    </p>
+    <p><a href="http://www.matyou.net/pages">Matyou Blog</a></p>
+  </footer>
+</body>
+</html>
