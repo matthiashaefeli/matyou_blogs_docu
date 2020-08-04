@@ -43,7 +43,7 @@
 
     <p>routes</p>
     post '/signup', to: 'users#create'
-    post '/singin', to: 'users#signin'
+    post '/signin', to: 'users#signin'
 
     <p>users_controller.rb</p>
     def create
@@ -56,6 +56,17 @@
     else
     render json: user.erorrs, status: :bad_request
     end
+    end
+
+    def signin
+    user = User.find_by(user_params)
+    if user
+    token = JsonWebToken.encode({
+      userId: user.id
+    })
+    render json: {token: token}.to_json
+    else
+    render json: {error: 'Invalid Request'}, status: :unauthorized
     end
 
     private
