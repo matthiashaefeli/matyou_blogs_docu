@@ -1,0 +1,173 @@
+<!DOCTYPE html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="styles.css">
+  <title>API and Auth</title>
+</head>
+<body>
+  <div class="bg">
+     <h1></h1>
+  </div>
+  <div class="body">
+    <h1>Rails API with Authentication</h1>
+    <p><b>We are going to create a simple Rails API with user authentication</b></p>
+    <p>Create new rails app</p>
+  </div>
+  <div class="code_wide">
+    <br>
+      <p>
+        rails new -d postgresql -T application_name --api<br>
+        rails g model User email:string password:string<br>
+        rails g controller users<br>
+        rails db:create<br>
+        rails db:migrate<br>
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>Add to gemfile:</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        gem 'bcrypt'<br>
+        gem 'jwt'<br>
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>bundle install</p>
+    <p>In the user.rb file add:</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        validates :email, presence: true, uniqueness: true<br>
+        validates :password, presence: :true<br>
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>Create json_web_token.rb in the lib folder and add code below</p>
+  </div>
+  <div class="code_wide">
+    <br>
+      <p>
+        class JsonWebToken<br>
+        <span class="tab">class << self</span><br><br>
+        <span class="tab">def encode(payload, exp = 24.hours.from.now)</span><br>
+        <span class="tab"><span class="tab">payload[:exp] = exp.to_i</span></span><br>
+        <span class="tab"><span class="tab">JWT.encode(payload, Rails.application.secrets.secret_key_base)</span></span><br>
+        <span class="tab">end</span><br>
+        <br>
+        <span class="tab"></span>def decode(token)<br>
+        <span class="tab"><span class="tab">body = JWR.decode(token, Rails.application.secrets.secret_key_base)[0]</span></span><br>
+        <span class="tab"><span class="tab">HashWithIndifferentAccess.new body</span></span><br>
+        <span class="tab">end</span><br>
+        end<br>
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>in application.rb inlcude the lib folder</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        config.autoload_paths << Rails.root.join('lib')
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>Define the routes in routes</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        post '/signup', to: 'users#create'<br>
+        post '/signin', to: 'users#signin'<br>
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>In user_controller.rb add code below</p>
+  </div>
+  <div class="code_wide">
+    <br>
+      <p>
+        def create<br>
+        <span class="tab">user = User.new(user_params)</span><br>
+        <span class="tab">if user.save</span><br>
+        <span class="tab"><span class="tab">token = JsonWebToken.encode({userId: user.id})</span></span><br>
+        <span class="tab"><span class="tab">render json: {token: token}.to_json</span></span><br>
+        <span class="tab">else</span><br>
+        <span class="tab"><span class="tab">render json: user.erorrs, status: :bad_request</span></span><br>
+        <span class="tab">end</span><br>
+        end<br><br>
+        def signin<br>
+        <span class="tab">user = User.find_by(user_params)</span><br>
+        <span class="tab">if use</span>r<br>
+        <span class="tab"><span class="tab">token = JsonWebToken.encode({userId: user.id})</span></span><br>
+        <span class="tab"><span class="tab">render json: {token: token}.to_json</span></span><br>
+        <span class="tab">else</span><br>
+        <span class="tab"><span class="tab">render json: {error: 'Invalid Request'}, status: :unauthorized</span></span><br>
+        <span class="tab">end</span><br><br>
+        private<br>
+        def user_params<br>
+        <span class="tab"><span class="tab">params.require(:user).permit(:email, :password)</span></span><br>
+        <span class="tab">end</span><br>
+        end<br>
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>In controllers/concerns create the file authorization.rb and add code below:</p>
+  </div>
+  <div class="code_wide">
+    <br>
+      <p>
+        module Authorization<br>
+        <span class="tab">def authorizes</span><br>
+        <span class="tab"><span class="tab">render json: { error: 'Not Authorizes' }, status: :unauthorized unless logged_in_user</span></span><br>
+        <span class="tab">end</span><br><br>
+        <span class="tab">def logged_in_user</span><br>
+        <span class="tab"><span class="tab">if decoded_token</span></span><br>
+        <span class="tab"><span class="tab"><span class="tab">user_id = decoded_token('userId')</span></span></span><br>
+        <span class="tab"><span class="tab"><span class="tab">@current_user = User.find(user_id)</span></span></span><br>
+        <span class="tab"><span class="tab">end</span></span></span><br>
+        <span class="tab">end</span><br><br>
+        <span class="tab">def decoded_token</span><br>
+        <span class="tab"><span class="tab">if request.headers['Authorization']</span></span><br>
+        <span class="tab"><span class="tab"><span class="tab">token = request.headers['Authorization'].split('')[1]</span></span></span><br>
+        <span class="tab"><span class="tab"><span class="tab">begin</span></span></span><br>
+        <span class="tab"><span class="tab"><span class="tab"><span class="tab">JsonWebToken.decode(token</span></span></span></span><br>
+        <span class="tab"><span class="tab"><span class="tab">rescue JsonWebToken::DecodeError</span></span></span><br>
+        <span class="tab"><span class="tab"><span class="tab"><span class="tab">nil</span></span></span><br>
+        <span class="tab"><span class="tab"><span class="tab">end</span></span></span><br>
+        <span class="tab"><span class="tab">end</span></span><br>
+        <span class="tab">end</span><br>
+        end
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>And now just include the concern to the controller where you need the user authorization:</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        include Authorization<br>
+      </p>
+    <br>
+  </div>
+  <footer class="footer">
+    <p>Posted by: Mat 08/04/2020</p>
+    <p>Contact information: <a href="mailto:mat@matyou.net">
+        mat@matyou.net</a>.
+    </p>
+    <p><a href="http://www.matyou.net/pages">Matyou Blog</a></p>
+  </footer>
+</body>
+</html>
