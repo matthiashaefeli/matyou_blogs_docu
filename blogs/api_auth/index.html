@@ -1,0 +1,75 @@
+<!DOCTYPE html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="styles.css">
+  <title>API and Auth</title>
+</head>
+<body>
+  <div class="bg">
+     <h1></h1>
+  </div>
+  <div class="body">
+    <h1>Rails API with Authentication</h1>
+    <p>Create new rails app</p>
+    <p>rails new -d postgresql -T application_name --api</p>
+    <p>rails g mode User email:string password:string</p>
+    <p>rails g controller users</p>
+    <p>rails db:create</p>
+    <p>rails db:migrate</p>
+    <p>add to gemfile</p>
+    <p>gem 'bcrypt'</p>
+    <p>gem 'jwt'</p>
+    <p>user.rb</p>
+    <p>validates :email, presence: true, uniqueness: true</p>
+    <p>validates :password, presence: :true</p>
+    <p>lib/jsoon_web_token.rb</p>
+    class JsonWebToken
+    class << self
+    def encode(payload, exp = 24.hours.from.now)
+    payload[:exp] = exp.to_i
+    JWT.encode(payload, Rails.application.secrets.secret_key_base)
+    end
+
+    def decode(token)
+    body = JWR.decode(token, Rails.application.secrets.secret_key_base)[0]
+    HashWithIndifferentAccess.new body
+    end
+    end
+
+    <p>application.rb</p>
+    config.autoload_paths << Rails.root.join('lib')
+
+    <p>routes</p>
+    post '/signup', to: 'users#create'
+    post '/singin', to: 'users#signin'
+
+    <p>users_controller.rb</p>
+    def create
+    user = User.new(user_params)
+    if user.save
+    token = JsonWebToken.encode({
+      userId: user.id
+    })
+    render json: {token: token}.to_json
+    else
+    render json: user.erorrs, status: :bad_request
+    end
+    end
+
+    private
+    def user_params
+    params.require(:user).permit(:email, :password)
+    end
+    end
+
+  <footer class="footer">
+    <p>Posted by: Mat 07/24/2020</p>
+    <p>Contact information: <a href="mailto:mat@matyou.net">
+        mat@matyou.net</a>.
+    </p>
+    <p><a href="http://www.matyou.net/pages">Matyou Blog</a></p>
+  </footer>
+</body>
+</html>
