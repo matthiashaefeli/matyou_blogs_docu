@@ -57,14 +57,14 @@
       <p>
         class JsonWebToken<br>
         <span class="tab">class << self</span><br><br>
-        <span class="tab">def encode(payload, exp = 24.hours.from.now)</span><br>
-        <span class="tab"><span class="tab">payload[:exp] = exp.to_i</span></span><br>
-        <span class="tab"><span class="tab">JWT.encode(payload, Rails.application.secrets.secret_key_base)</span></span><br>
-        <span class="tab">end</span><br>
+        <span class="tab"><span class="tab">def encode(payload)</span></span><br>
+        <span class="tab"><span class="tab"><span class="tabb">JWT.encode(payload, Rails.application.secrets.secret_key_base)</span></span></span><br>
+        <span class="tab"><span class="tab">end</span></span><br>
         <br>
-        <span class="tab"></span>def decode(token)<br>
-        <span class="tab"><span class="tab">body = JWR.decode(token, Rails.application.secrets.secret_key_base)[0]</span></span><br>
-        <span class="tab"><span class="tab">HashWithIndifferentAccess.new body</span></span><br>
+        <span class="tab"><span class="tab">def decode(token)</span></span><br>
+        <span class="tab"><span class="tab"><span class="tab">body = JWR.decode(token, Rails.application.secrets.secret_key_base)[0]</span></span></span><br>
+        <span class="tab"><span class="tab"><span class="tab">HashWithIndifferentAccess.new body</span></span></span><br>
+        <span class="tab"><span class="tab">end</span></span><br>
         <span class="tab">end</span><br>
         end<br>
       </p>
