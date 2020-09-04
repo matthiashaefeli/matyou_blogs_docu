@@ -1,0 +1,65 @@
+.bg {
+  max-width: 60%;
+  margin: auto;
+  height: 500px;
+  background: url(native.png) no-repeat center top fixed;
+  text-align: center;
+  color: black;
+}
+
+body {
+  text-align: center;
+}
+
+.text {
+  width: 60%;
+  margin: auto;
+}
+
+.code {
+  background-color:	#D3D3D3;
+  padding: 5px;
+  width: 50%;
+  margin: auto;
+  text-align: left;
+}
+
+.code > p {
+  padding-left: 2px;
+  margin: -1px 0;
+}
+
+ul {
+  width: 30%;
+  margin: auto;
+}
+
+.tab1 {
+  margin-left: 10px;
+}
+
+.tab2 {
+  margin-left: 20px;
+}
+
+.tab3 {
+  margin-left: 30px;
+}
+
+.tab4 {
+  margin-left: 40px;
+}
+
+.tab5 {
+  margin-left: 50px;
+}
+
+.tab6 {
+  margin-left: 60px;
+}
+
+@media screen and (max-width: 1100px) {
+  .bg {
+    max-width: 100%;
+  }
+}

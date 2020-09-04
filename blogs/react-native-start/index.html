@@ -1,0 +1,96 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>React-native start with firebase</title>
+</head>
+<body>
+  <div class='bg'></div>
+  <h1>React Native , Redux and firebase start.</h1>
+  <div class='text'>
+    <p>How to set up a React Native App with Redux and firebase.</p>
+    <p>First we create the app with the command:</p>
+    <div class='code'>
+      <p>$ react-native init app_name</p>
+    </div>
+    <p>In my case the I create my app with Yarn.</p>
+    <p>Go into the created folder:</p>
+    <div class='code'>
+      <p>$ cd app_name</p>
+    </div>
+    <p>Now we add redux, react-redux, and firebase and start the app:</p>
+    <div class='code'>
+      <p>$ yarn add redux</p>
+      <p>$ yarn add react-redux</p>
+      <p>$ yarn add firebase</p>
+      <p>$ npx react-native run ios</p>
+    </div>
+    <p>Register the app in firebase:</p>
+    <p><a href='https://console.firebase.google.com/' target='_blank'>https://console.firebase.google.com/</a> </p>
+    <ul>
+      <li>Click on Add project</li>
+      <li>Enter your project name</li>
+      <li>Continue</li>
+      <li>Continue</li>
+      <li>Create Project</li>
+      <li>Your new project is ready: Continue</li>
+      <li>Click on Authentication</li>
+      <li>Sign-in method</li>
+      <li>Email/Password</li>
+      <li>Enable first enable switch</li>
+      <li>Safe</li>
+      <li>Project Overview</li>
+      <li>Click on &lt/&gt</li>
+      <li>Add app nickname</li>
+      <li>Register App</li>
+      <li>Copy only the text in the script tag</li>
+    </ul>
+    <p>Open your project with your favorite editor.</p>
+    <p>Add new Folder called src</p>
+    <p>In the src folder create a new file called App.js and add code below</p>
+    <div class='code'>
+      <p>import React, { Component } from 'react';</p>
+      <p>import { View, Text } from 'react-native';</p>
+      <p>import { Provider } from 'react-redux';</p>
+      <p>import { createStore } from 'redux';</p>
+      <p>import firebase from 'firebase';</p>
+      <p>import reducers from './reducers';</p>
+      <br>
+      <p>class App extends Component {</p>
+      <p><span  class='tab1'>componentDidMount() {</span></p>
+      <p><span class='tab2'>your_copied_firebase_config_here</span></p>
+      <p><span class='tab1'>}</span></p><br>
+      <p><span class='tab1'>render() {</span></p>
+      <p><span class='tab2'>return (</span></p>
+      <p><span class='tab3'>&ltProvider&gt</span></p>
+      <p><span class='tab4'>&ltView&gt</span></p>
+      <p><span class='tab5'>&ltText&gt</span></p>
+      <p><span class='tab6'>My App</span></p>
+      <p><span class='tab5'>&ltText&gt</span></p>
+      <p><span class='tab4'>&ltView&gt</span></p>
+      <p><span class='tab3'>&ltProvider&gt</span></p>
+      <p><span class='tab2'>);</span></p>
+      <p><span class='tab1'>}</span></p>
+      <p>}</p>
+      <br>
+      <p>export default App;</p>
+    </div>
+    <p>Search for the index.js file in the root directory and change it like below. Now we are importing the new App.js file.</p>
+    <div class='code'>
+      <p>import { AppRegistry } from 'react-native';</p>
+      <p>import App from './src/App';</p>
+      <br>
+      <p>AppRegistry.registerComponent('my_app_name', () => App);</p>
+    </div>
+    <p> In the src folder we create a new folder called reducers and create a new file in this folder called index.js and add code below</p>
+    <div class='code'>
+      <p>import { combineReducers } from 'redux';</p>
+      <br>
+      <p>export default combineReducers({</p>
+      <p><span class='tab1'>exampleReducer: () => []</span></p>
+      <p>})</p>
+    </div>
+  </div>
+</body>
+</html>
