@@ -1,0 +1,6 @@
+# SQL query statistic
+
+```
+SET STATISTICS TIME ON
+SET STATISTICS IO ON
+```
