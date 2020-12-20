@@ -1,14 +1,5 @@
-# Do you wonder how to add the small icon on the top of your browser?
-Well, here we go
-On this page you can build your own icon
-
-editor
-After building your icon go to the page
-
-build
-and Download the icon
-
-Add the icon to your homepage.
+# Favicon Rails
+Create your personal favicon icon. There are a lot of favicon creater tools online.
 
 In rails add the icon to the public folder
 
