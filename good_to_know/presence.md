@@ -3,7 +3,7 @@
 ```
 [].presence
 => nil
-``
+```
 
 Returns the receiver if it's present otherwise returns nil
 
