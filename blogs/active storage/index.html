@@ -1,0 +1,149 @@
+<!DOCTYPE html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="styles.css">
+  <title>Active Storage and Rails 6</title>
+</head>
+<body>
+  <div class="bg">
+     <h1>Active Storage and Rails 6</h1>
+  </div>
+  <div class="body">
+    <p><b>We are going to add an image upload with active storage to a rails app</b></p>
+    <p>First we have to install active storage</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        rails active_storage:install
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>Bundle install and migration</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        bundle install<br />
+        rails db:migrate
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>Add to model where the image should be attached:</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        has_one_attached :main_image
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>Add to the view the upload file field:</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        <%= f.label :main_image %><br />
+        <%= f.file_field :main_image %>
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>Display image in view</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        <%= image_tag url_for(model.image) %>
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>Image validation on model</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        validate :image_validation
+        <br />
+        <br />
+        def image_validation<br />
+        <span class="tab">return unless image.attached?</span><br><br />
+        <span class="tab">unless main_image.byte_size <= 1.megabyte</span><br>
+        <span class="tab"><span class="tab">errors.add(:main_image, "is too big")</span></span><br>
+        <span class="tab">end</span><br>
+        end
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>Add encrypted credentials. Open temp file to add credential with vscode:</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        EDITOR="code --wait" rails credentials:edit
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>Replace values with your values and uncommit this section:</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        aws:<br />
+        access_key_id: your-access-key-id<br />
+        secret_access_key: your-secret-access-key<br />
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>close the temp file and open config/storage.yml and check region and bucket:</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        amazon:<br />
+        <span class="tab">service: S3</span><br />
+        <span class="tab">access_key_id: <%= Rails.application.credentials.dig(:aws, :access_key_id) %></span><br />
+        <span class="tab">secret_access_key: <%= Rails.application.credentials.dig(:aws, :secret_access_key) %></span><br />
+        <span class="tab">region: us-east-1</span><br />
+        <span class="tab">bucket: your-bucket-name</span><br />
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>in config/environments/production.rb change following:</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        config.active_storage.service = :amazon
+      </p>
+    <br>
+  </div>
+  <div class="body">
+    <p>and finally add this to the gemfile and run bundle install:</p>
+  </div>
+  <div class="code">
+    <br>
+      <p>
+        gem "aws-sdk-s3", require: false
+      </p>
+    <br>
+  </div>
+  <footer class="footer">
+    <p>Posted by: Mat 02/02/2021</p>
+    <p>Contact information: <a href="mailto:mat@matyou.net">
+        mat@matyou.net</a>.
+    </p>
+    <p><a href="http://www.matyou.net/pages">Matyou Blog</a></p>
+  </footer>
+</body>
+</html>
