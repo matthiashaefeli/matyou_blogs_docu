@@ -1,4 +1,4 @@
-# Remove whitespace - and / with regex and gub
+# Remove whitespace - and / with regex and gsub
 
 ```
 2.7.2 :001 > 'this is-a/test'.gsub(/\s+|\-|\//, '')
