@@ -1,4 +1,4 @@
-# Ruby tab
+# Ruby tap
 
 Tap is a nice little method that improves code readability. See example below
 
@@ -19,10 +19,10 @@ def create_user_method
   user
 end
 ```
-Or you could use tab to do it like this:
+Or you could use tap to do it like this:
 ```
 def create_user_method
-  User.new.tab do |u|
+  User.new.tap do |u|
     u.first_name = 'first'
     u.last_name = 'last'
     u.age = 40
